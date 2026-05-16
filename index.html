@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Platformer Lab</title>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>Platformer Lab</h1>
+        <p>Play, design levels, redraw sprites, then change the rules.</p>
+      </div>
+      <nav class="mode-tabs" aria-label="Workspace modes">
+        <button class="tab-button is-active" type="button" data-mode="play">Play</button>
+        <button class="tab-button" type="button" data-mode="designer">Designer</button>
+        <button class="tab-button" type="button" data-mode="sprites">Sprites</button>
+        <button class="tab-button" type="button" data-mode="lessons">Lessons</button>
+      </nav>
+    </header>
+
+    <main class="workspace">
+      <section id="playView" class="view is-active" aria-label="Play the game">
+        <div class="stage-column">
+          <canvas id="gameCanvas" width="960" height="544" aria-label="Platformer game canvas"></canvas>
+        </div>
+        <aside class="side-panel">
+          <h2>Play</h2>
+          <label class="field-label" for="levelSelect">Level</label>
+          <select id="levelSelect"></select>
+          <div class="button-row">
+            <button id="restartButton" type="button">Restart</button>
+            <button id="nextLevelButton" type="button">Next Level</button>
+          </div>
+          <dl class="status-list">
+            <div><dt>Score</dt><dd id="scoreValue">0</dd></div>
+            <div><dt>Coins</dt><dd id="coinValue">0 / 0</dd></div>
+            <div><dt>Lives</dt><dd id="livesValue">3</dd></div>
+            <div><dt>Status</dt><dd id="messageValue">Ready</dd></div>
+          </dl>
+          <div class="hint-box">
+            <h3>Controls</h3>
+            <p>Move with A/D or arrow keys. Jump with W, Up, or Space. Press R to restart.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section id="designerView" class="view" aria-label="Design levels">
+        <div class="stage-column designer-stage">
+          <canvas id="designerCanvas" width="960" height="544" aria-label="Level designer canvas"></canvas>
+          <label class="range-label" for="designerScroll">Scroll through the level</label>
+          <input id="designerScroll" type="range" min="0" max="1" step="1" value="0">
+        </div>
+        <aside class="side-panel designer-panel">
+          <h2>Level Designer</h2>
+          <label class="field-label" for="designerLevelSelect">Editing</label>
+          <select id="designerLevelSelect"></select>
+          <div class="form-grid">
+            <label>Name <input id="levelNameInput" type="text" maxlength="32"></label>
+            <label>Width <input id="levelWidthInput" type="number" min="32" max="160"></label>
+            <label>Height <input id="levelHeightInput" type="number" min="12" max="22"></label>
+          </div>
+          <div class="button-row">
+            <button id="newLevelButton" type="button">New</button>
+            <button id="saveLevelButton" type="button">Save</button>
+            <button id="tryLevelButton" type="button">Try Level</button>
+          </div>
+          <h3>Brush</h3>
+          <div id="brushPalette" class="tool-grid"></div>
+          <div class="button-row">
+            <button id="exportLevelButton" type="button">Export Level</button>
+            <button id="importLevelButton" type="button">Import Level</button>
+          </div>
+          <input id="levelFileInput" class="hidden-file" type="file" accept="application/json,.json">
+          <div class="hint-box">
+            <h3>Designer Tips</h3>
+            <p>Drag to paint. Use Erase to remove tiles or objects. Save before switching away.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section id="spritesView" class="view" aria-label="Edit sprites">
+        <div class="sprite-workbench">
+          <div class="sprite-editor-panel">
+            <canvas id="spriteCanvas" width="512" height="512" aria-label="Sprite pixel editor"></canvas>
+            <div id="paletteButtons" class="palette-buttons"></div>
+          </div>
+          <aside class="side-panel sprite-side-panel">
+            <h2>Sprite Studio</h2>
+            <label class="field-label" for="spriteSelect">Sprite</label>
+            <select id="spriteSelect"></select>
+            <div class="preview-box">
+              <canvas id="spritePreviewCanvas" width="160" height="160" aria-label="Sprite preview"></canvas>
+            </div>
+            <div class="button-row">
+              <button id="saveSpritesButton" type="button">Save Sprites</button>
+              <button id="resetSpritesButton" type="button">Reset Sprites</button>
+            </div>
+            <div class="button-row">
+              <button id="exportSpritesButton" type="button">Export Sprites</button>
+              <button id="importSpritesButton" type="button">Import Sprites</button>
+            </div>
+            <input id="spriteFileInput" class="hidden-file" type="file" accept="application/json,.json">
+            <div class="hint-box">
+              <h3>Sprite Tips</h3>
+              <p>Pick a color, paint pixels, then Save Sprites. Transparent pixels use the first swatch.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="lessonsView" class="view lessons" aria-label="Programming lessons">
+        <div class="lesson-column">
+          <h2>Programming Quests</h2>
+          <p>The game already works. These quests are small changes that teach useful programming ideas without making you build the whole engine first.</p>
+          <ol class="quest-list">
+            <li><strong>Tune the feel:</strong> open `js/student-challenges.js` and change `maxRunSpeed`, `jumpVelocity`, or `gravity`.</li>
+            <li><strong>Add double jump:</strong> change `airJumps` from `0` to `1`, then try a harder level.</li>
+            <li><strong>Make coins matter:</strong> change `coinValue`, then make a level full of coins.</li>
+            <li><strong>Lock the goal:</strong> set `requireAllCoinsForGoal` to `true` so players must collect every coin.</li>
+            <li><strong>Change enemy behavior:</strong> edit `enemyPatrolSpeed` and test whether enemies feel fair.</li>
+            <li><strong>Invent a rule:</strong> add a new object in the designer, then write what it should do before coding it.</li>
+          </ol>
+          <div class="hint-box wide-hint">
+            <h3>Best Way To Work Together</h3>
+            <p>Let the child drive the creative choices. Keep code sessions short, test after every small change, and use the designer whenever level changes would be tedious in code.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/default-content.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/student-challenges.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/designer.js"></script>
+    <script src="js/sprite-studio.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
