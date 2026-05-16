@@ -7,7 +7,7 @@ This is a small browser platformer designed for building with a kid. The game is
 From this folder:
 
 ```powershell
-python -m http.server 8080
+node tools/dev-server.js
 ```
 
 Then open:
@@ -16,17 +16,27 @@ Then open:
 http://localhost:8080
 ```
 
-It is a static site, so it can also be published with GitHub Pages, Netlify, Azure Static Web Apps, or any host that serves HTML, CSS, and JavaScript.
+The dev server is still just serving static files, but it also lets the **Build Game Data** button save directly into `assets/game-data/`. If port 8080 is busy, run `node tools/dev-server.js 8081` and open `http://localhost:8081`.
+
+The game can still be published with GitHub Pages, Netlify, Azure Static Web Apps, or any host that serves HTML, CSS, and JavaScript.
 
 ## Build Game Data
 
-The game starts from one shared data file. To build that file from the current starter content and make it the default, run:
+The simplest workflow is:
+
+1. Run `node tools/dev-server.js`.
+2. Edit levels and sprites in the browser.
+3. Press **Build Game Data**.
+
+That saves the current game to `assets/game-data/<game-name>.game.json` and updates `index.html` so new browsers load it by default.
+
+To build from the current starter content without opening the browser, run:
 
 ```powershell
 node tools/build-game-data.js "Platformer Lab"
 ```
 
-That creates `assets/game-data/platformer-lab.game.json` and updates `index.html` so new browsers load it first. To install a game data file made from the in-browser tools, pass it as the source:
+That creates `assets/game-data/platformer-lab.game.json` and updates `index.html` so new browsers load it first. If the game was opened from a plain static server, **Build Game Data** downloads a `.game.json` file instead; install that file with:
 
 ```powershell
 node tools/build-game-data.js "My Game" --from path\to\my-game.game.json
@@ -77,6 +87,7 @@ game-1/
     student-challenges.js
   tools/
     build-game-data.js
+    dev-server.js
   docs/
     parent-guide.md
     student-guide.md

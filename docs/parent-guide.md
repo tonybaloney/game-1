@@ -114,11 +114,13 @@ For GitHub Pages:
 For a quick local check, run:
 
 ```powershell
-python -m http.server 8080
+node tools/dev-server.js
 ```
 
 Then open `http://localhost:8080`.
 
+When using this dev server, the Play tab's Build Game Data button writes directly to `assets/game-data/` and updates `index.html`. If you use a plain static server instead, the button downloads a `.game.json` file that can still be installed later with `node tools/build-game-data.js "My Game" --from path\to\file.game.json`.
+
 ## Backup Advice
 
-Because drafts are saved in the browser, use Build Game Data after a good session. Save the `.game.json` file somewhere safe or install it as the default with the build command.
+Because drafts are saved in the browser, use Build Game Data after a good session. With `node tools/dev-server.js`, that saves directly into the project; otherwise, keep the downloaded `.game.json` somewhere safe.

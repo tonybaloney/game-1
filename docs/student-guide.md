@@ -36,6 +36,8 @@ Good level design is not just making things hard. Try making a level that teache
 
 When your level and sprites feel ready, go to Play, name your game, and press Build Game Data. That makes one file with your levels and art together.
 
+If the game was started with `node tools/dev-server.js`, the file is saved into the project automatically. If not, your browser downloads the file instead.
+
 ## Programming Quests
 
 Open `js/student-challenges.js`. Try one quest at a time.

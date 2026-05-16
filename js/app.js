@@ -164,13 +164,17 @@
       setGameName(byId("gameNameInput").value.trim() || gameName);
       window.PlatformerStorage.saveGameName(gameName);
     });
-    byId("buildGameDataButton").addEventListener("click", () => {
+    byId("buildGameDataButton").addEventListener("click", async () => {
       if (window.PlatformerDesigner && window.PlatformerDesigner.saveLevel) {
         window.PlatformerDesigner.saveLevel();
       }
-      const gameData = window.PlatformerStorage.downloadGameData(byId("gameNameInput").value, levels, sprites);
-      setGameName(gameData.name);
-      toast(message("gameDataBuilt", "Game data built."));
+      const result = await window.PlatformerStorage.buildGameData(byId("gameNameInput").value, levels, sprites);
+      setGameName(result.gameData.name);
+      if (result.savedToProject) {
+        toast(message("gameDataSaved", "Game data saved to {path}.", { path: result.path }));
+      } else {
+        toast(message("gameDataDownloaded", "Game data downloaded. Run the dev server to save directly."));
+      }
     });
 
     window.PlatformerGame.init({

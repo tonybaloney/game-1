@@ -64,6 +64,8 @@
       levelSaved: "Level saved.",
       spritesSaved: "Sprites saved.",
       gameDataBuilt: "Game data built.",
+      gameDataSaved: "Game data saved to {path}.",
+      gameDataDownloaded: "Game data downloaded. Run the dev server to save directly.",
       springJump: "Spring jump",
       spikeHit: "Watch the spikes",
       fell: "You fell",

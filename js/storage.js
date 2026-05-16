@@ -173,6 +173,40 @@
     return gameData;
   }
 
+  async function buildGameData(name, levels, sprites) {
+    // When tools/dev-server.js is serving the app, this saves straight into the
+    // repo. On any plain static server, the request fails and we download a file.
+    const gameData = makeGameData(name, levels, sprites);
+    saveGameName(gameData.name);
+
+    try {
+      const response = await window.fetch("/api/game-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameData })
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return {
+          gameData,
+          savedToProject: true,
+          path: result.path || "assets/game-data/"
+        };
+      }
+    } catch (error) {
+      // A missing endpoint just means the app is running from a normal static
+      // server. Downloading keeps the workflow usable everywhere.
+    }
+
+    downloadJson(`${slugify(gameData.name)}.game.json`, gameData);
+    return {
+      gameData,
+      savedToProject: false,
+      path: `${slugify(gameData.name)}.game.json`
+    };
+  }
+
   function downloadJson(filename, data) {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
@@ -217,6 +251,7 @@
     saveGameName,
     makeGameData,
     downloadGameData,
+    buildGameData,
     downloadJson,
     readJsonFile
   };
