@@ -119,6 +119,8 @@ node tools/dev-server.js
 
 Then open `http://localhost:8080`.
 
+In GitHub Codespaces, the project asks Codespaces to forward port 8080 automatically. If a browser tab does not open after starting the server, open the VS Code Ports tab and use the forwarded 8080 address. Existing Codespaces may need one rebuild before they notice the `.devcontainer` settings.
+
 When using this dev server, the Play tab's Build Game Data button writes directly to `assets/game-data/` and updates `index.html`. If you use a plain static server instead, the button downloads a `.game.json` file that can still be installed later with `node tools/build-game-data.js "My Game" --from path\to\file.game.json`.
 
 ## Backup Advice

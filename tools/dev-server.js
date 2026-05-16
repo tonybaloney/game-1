@@ -6,7 +6,9 @@ const http = require("http");
 const path = require("path");
 
 const projectRoot = path.resolve(__dirname, "..");
-const port = Number(process.argv[2]) || 8080;
+const options = parseOptions(process.argv.slice(2));
+const port = options.port;
+const host = options.host;
 const gameDataFormat = "platformer-lab-game-data";
 const gameDataVersion = 1;
 const maxBodyBytes = 8 * 1024 * 1024;
@@ -21,6 +23,46 @@ const contentTypes = {
   ".ogg": "audio/ogg",
   ".wav": "audio/wav"
 };
+
+function parseOptions(args) {
+  const parsed = {
+    port: Number(process.env.PORT) || 8080,
+    host: process.env.HOST || "0.0.0.0"
+  };
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (/^\d+$/.test(arg)) {
+      parsed.port = Number(arg);
+    } else if (arg === "--port") {
+      parsed.port = Number(args[index + 1]) || parsed.port;
+      index += 1;
+    } else if (arg.startsWith("--port=")) {
+      parsed.port = Number(arg.slice("--port=".length)) || parsed.port;
+    } else if (arg === "--host") {
+      parsed.host = args[index + 1] || parsed.host;
+      index += 1;
+    } else if (arg.startsWith("--host=")) {
+      parsed.host = arg.slice("--host=".length) || parsed.host;
+    }
+  }
+
+  return parsed;
+}
+
+function getLocalUrl() {
+  const displayHost = host === "0.0.0.0" || host === "::" ? "localhost" : host;
+  return `http://${displayHost}:${port}`;
+}
+
+function getCodespacesUrl() {
+  const codespaceName = process.env.CODESPACE_NAME;
+  const forwardingDomain = process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN;
+  if (!codespaceName || !forwardingDomain) {
+    return "";
+  }
+  return `https://${codespaceName}-${port}.${forwardingDomain}`;
+}
 
 function slugify(value) {
   return String(value || "")
@@ -170,8 +212,15 @@ const server = http.createServer((request, response) => {
   send(response, 405, "Method not allowed");
 });
 
-server.listen(port, () => {
-  console.log(`Platformer Lab dev server: http://localhost:${port}`);
+server.listen(port, host, () => {
+  console.log(`Platformer Lab dev server: ${getLocalUrl()}`);
+  console.log(`Listening on ${host}:${port}`);
+  const codespacesUrl = getCodespacesUrl();
+  if (codespacesUrl) {
+    console.log(`GitHub Codespaces URL: ${codespacesUrl}`);
+  } else if (process.env.CODESPACES === "true") {
+    console.log("GitHub Codespaces: open the Ports tab and make port 8080 public or private, then open it in the browser.");
+  }
   console.log("Build Game Data will save directly into assets/game-data/ on this server.");
 });
 

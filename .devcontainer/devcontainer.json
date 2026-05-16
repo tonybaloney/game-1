@@ -1,0 +1,10 @@
+{
+  "name": "Platformer Lab",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Platformer Lab",
+      "onAutoForward": "openBrowser"
+    }
+  }
+}

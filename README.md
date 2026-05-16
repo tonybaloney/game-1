@@ -18,6 +18,18 @@ http://localhost:8080
 
 The dev server is still just serving static files, but it also lets the **Build Game Data** button save directly into `assets/game-data/`. If port 8080 is busy, run `node tools/dev-server.js 8081` and open `http://localhost:8081`.
 
+## GitHub Codespaces
+
+This repo includes `.devcontainer/devcontainer.json`, which asks Codespaces to forward port 8080 and open the browser when the dev server starts. In a new Codespace, run:
+
+```powershell
+node tools/dev-server.js
+```
+
+If the browser does not open automatically, use the forwarded port from the VS Code **Ports** tab. The server also prints a `GitHub Codespaces URL` when Codespaces provides the forwarding domain.
+
+If you are already inside an older Codespace, rebuild it once so Codespaces picks up `.devcontainer/devcontainer.json`, or manually forward port 8080 from the **Ports** tab.
+
 The game can still be published with GitHub Pages, Netlify, Azure Static Web Apps, or any host that serves HTML, CSS, and JavaScript.
 
 ## Build Game Data
@@ -74,6 +86,8 @@ game-1/
   assets/
     game-data/
     music/
+  .devcontainer/
+    devcontainer.json
   css/
     style.css
   js/
