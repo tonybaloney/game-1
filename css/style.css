@@ -275,10 +275,6 @@ canvas {
   image-rendering: pixelated;
 }
 
-.hidden-file {
-  display: none;
-}
-
 .sprite-workbench {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;

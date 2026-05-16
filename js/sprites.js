@@ -1,11 +1,16 @@
 (function () {
   "use strict";
 
+  // sprites.js is deliberately small: sprites are just 2D arrays of colors, and
+  // drawing a sprite means painting one rectangle for each non-transparent pixel.
+
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
   }
 
   function normalizeSprite(sprite) {
+    // Normalizing protects the renderer from half-finished sprite edits or old
+    // saved data with missing rows and columns.
     const width = Math.max(1, Number(sprite.width) || 16);
     const height = Math.max(1, Number(sprite.height) || 16);
     const pixels = Array.from({ length: height }, (_, row) => {
@@ -30,6 +35,8 @@
   }
 
   function drawSprite(ctx, sprite, x, y, width, height, options) {
+    // The same sprite data can draw at many sizes. Pixel art stays crisp because
+    // every source pixel becomes a scaled rectangle.
     if (!sprite) {
       return;
     }
@@ -66,6 +73,8 @@
   }
 
   function drawTile(ctx, sprites, tileTypes, tileId, x, y, size) {
+    // Tiles prefer sprite art, but can fall back to a solid color while students
+    // are adding or debugging new tile types.
     const tile = tileTypes.find((candidate) => candidate.id === tileId);
     if (!tile || tileId === 0) {
       return;

@@ -32,6 +32,10 @@ Good level design is not just making things hard. Try making a level that teache
 5. Press Save Sprites.
 6. Go back to Play and check it out.
 
+## Build Your Game Data
+
+When your level and sprites feel ready, go to Play, name your game, and press Build Game Data. That makes one file with your levels and art together.
+
 ## Programming Quests
 
 Open `js/student-challenges.js`. Try one quest at a time.
@@ -85,6 +89,80 @@ Now the player must collect every coin before the flag works.
 ### Quest 5: Tune Enemies
 
 Change `enemyPatrolSpeed`. If enemies move too fast, the game feels unfair. If they move too slowly, they may be boring.
+
+### Quest 6: Try Different Players
+
+Find:
+
+```javascript
+activePlayerType: "explorer"
+```
+
+Try:
+
+```javascript
+activePlayerType: "comet"
+```
+
+Then try `"boulder"`. Compare the objects in `playerTypes`. Which properties make each player feel different?
+
+### Quest 7: Make A New Player
+
+Copy one player object in `playerTypes`, rename it, and change at least three properties. Good trade-offs are more interesting than simple upgrades.
+
+Examples:
+
+- Fast but hard to stop.
+- Slow but jumps high.
+- Tiny but only has one life if you add that rule later.
+
+### Quest 8: Read Enemy Objects
+
+Find `enemyTypes`. Each enemy has data, like `speed`, and an `update` function that runs every frame.
+
+Use the Designer to place Walker, Hopper, and Charger enemies. Then change one number in each enemy and playtest.
+
+### Quest 9: Change Enemy AI
+
+Pick one enemy `update` function. Try one change:
+
+- Make the hopper jump more often.
+- Make the charger notice the player from farther away.
+- Make the walker reverse direction less often by changing how it uses helpers.
+
+### Quest 10: Invent A New Rule
+
+The functions near the bottom are game rules:
+
+- `onCoinCollected`
+- `canUseGoal`
+- `onPowerUpCollected`
+
+Change one function so the game rewards a different strategy. For example, make coins give extra points when the player has a power-up.
+
+### Quest 11: Rename And Retheme
+
+Find the `customization` object near the top of `js/student-challenges.js`.
+
+Try changing:
+
+- `game.title`
+- `game.subtitle`
+- `assetNames.coin` and `assetNames.coins`
+- one message, such as `coinCollected`
+- one background color, such as `skyColor`
+
+To add music, put a sound file in `assets/music/`, then set:
+
+```javascript
+music: {
+  src: "assets/music/theme.mp3",
+  volume: 0.45,
+  loop: true
+}
+```
+
+Refresh the page. A Music button appears after `src` has a file path.
 
 ## Debugging Tips
 

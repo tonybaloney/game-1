@@ -1,8 +1,15 @@
 (function () {
   "use strict";
 
+  // app.js is the glue layer. It loads saved/default content, connects DOM
+  // controls to the game modules, and keeps the Play, Designer, and Sprite tabs
+  // talking to the same level and sprite data.
+
   let levels;
   let sprites;
+  let gameName;
+  let musicAudio;
+  let musicPlaying = false;
   let toastTimer;
 
   function byId(id) {
@@ -15,6 +22,84 @@
     element.classList.add("is-visible");
     window.clearTimeout(toastTimer);
     toastTimer = window.setTimeout(() => element.classList.remove("is-visible"), 2200);
+  }
+
+  function label(key, fallback) {
+    return window.StudentChallenges.label(key, fallback);
+  }
+
+  function assetName(key, fallback) {
+    return window.StudentChallenges.assetName(key, fallback);
+  }
+
+  function message(key, fallback, data) {
+    return window.StudentChallenges.message(key, fallback, data);
+  }
+
+  function setGameName(nextName) {
+    gameName = String(nextName || gameName || "Untitled Game").trim() || "Untitled Game";
+    document.title = gameName;
+    byId("appTitle").textContent = gameName;
+    byId("gameNameInput").value = gameName;
+  }
+
+  function applyCustomText() {
+    const game = window.StudentChallenges.customization.game || {};
+    byId("appSubtitle").textContent = game.subtitle || "";
+    byId("levelSelectLabel").textContent = label("level", "Level");
+    byId("gameNameLabel").textContent = label("gameName", "Game Name");
+    byId("buildGameDataButton").textContent = label("buildGameData", "Build Game Data");
+    byId("restartButton").textContent = label("restart", "Restart");
+    byId("nextLevelButton").textContent = label("nextLevel", "Next Level");
+    byId("scoreLabel").textContent = label("score", "Score");
+    byId("coinLabel").textContent = assetName("coins", "Coins");
+    byId("livesLabel").textContent = label("lives", "Lives");
+    byId("statusLabel").textContent = label("status", "Status");
+    byId("controlsTitle").textContent = label("controlsTitle", "Controls");
+    byId("controlsText").textContent = label("controlsText", "Move with A/D or arrow keys. Jump with W, Up, or Space. Press R to restart.");
+  }
+
+  function updateMusicButton() {
+    const button = byId("musicButton");
+    button.textContent = musicPlaying ? label("musicOn", "Music On") : label("musicOff", "Music Off");
+  }
+
+  function initMusic() {
+    const music = window.StudentChallenges.music();
+    const button = byId("musicButton");
+    if (!music || !music.src) {
+      button.hidden = true;
+      return;
+    }
+
+    musicAudio = new Audio(music.src);
+    musicAudio.loop = music.loop !== false;
+    musicAudio.volume = Math.max(0, Math.min(1, Number(music.volume) || 0.45));
+    button.hidden = false;
+    updateMusicButton();
+
+    button.addEventListener("click", () => {
+      if (!musicAudio) {
+        toast(message("musicUnavailable", "Add a music file path in js/student-challenges.js first."));
+        return;
+      }
+
+      if (musicPlaying) {
+        musicAudio.pause();
+        musicPlaying = false;
+        updateMusicButton();
+        toast(message("musicStopped", "Music stopped."));
+        return;
+      }
+
+      musicAudio.play().then(() => {
+        musicPlaying = true;
+        updateMusicButton();
+        toast(message("musicStarted", "Music started."));
+      }).catch(() => {
+        toast(message("musicUnavailable", "Add a music file path in js/student-challenges.js first."));
+      });
+    });
   }
 
   function setMode(mode) {
@@ -53,6 +138,8 @@
   }
 
   function refreshGameContent(message) {
+    // Editors change shared data. Refresh every view so playtesting always uses
+    // the same levels and sprites the student just saved.
     window.PlatformerGame.refreshContent(levels, sprites);
     window.PlatformerDesigner.refresh(levels, sprites);
     window.PlatformerSpriteStudio.refresh(sprites);
@@ -70,6 +157,22 @@
 
   function initGame() {
     updatePlayLevelSelect(0);
+    setGameName(gameName);
+    applyCustomText();
+    initMusic();
+    byId("gameNameInput").addEventListener("change", () => {
+      setGameName(byId("gameNameInput").value.trim() || gameName);
+      window.PlatformerStorage.saveGameName(gameName);
+    });
+    byId("buildGameDataButton").addEventListener("click", () => {
+      if (window.PlatformerDesigner && window.PlatformerDesigner.saveLevel) {
+        window.PlatformerDesigner.saveLevel();
+      }
+      const gameData = window.PlatformerStorage.downloadGameData(byId("gameNameInput").value, levels, sprites);
+      setGameName(gameData.name);
+      toast(message("gameDataBuilt", "Game data built."));
+    });
+
     window.PlatformerGame.init({
       canvas: byId("gameCanvas"),
       levels,
@@ -98,7 +201,7 @@
         window.PlatformerStorage.saveLevels(levels);
         window.PlatformerGame.refreshContent(levels, sprites);
         updatePlayLevelSelect(window.PlatformerGame.getLevelIndex());
-        toast("Level saved.");
+        toast(message("levelSaved", "Level saved."));
       },
       elements: {
         playLevelSelect: byId("levelSelect"),
@@ -109,10 +212,7 @@
         scroll: byId("designerScroll"),
         brushPalette: byId("brushPalette"),
         saveButton: byId("saveLevelButton"),
-        newButton: byId("newLevelButton"),
-        exportButton: byId("exportLevelButton"),
-        importButton: byId("importLevelButton"),
-        fileInput: byId("levelFileInput")
+        newButton: byId("newLevelButton")
       }
     });
 
@@ -133,30 +233,37 @@
       onChange: (nextSprites) => {
         sprites = nextSprites;
         window.PlatformerStorage.saveSprites(sprites);
-        refreshGameContent("Sprites saved.");
+        refreshGameContent(message("spritesSaved", "Sprites saved."));
       },
       elements: {
         spriteSelect: byId("spriteSelect"),
         paletteButtons: byId("paletteButtons"),
         saveButton: byId("saveSpritesButton"),
         resetButton: byId("resetSpritesButton"),
-        exportButton: byId("exportSpritesButton"),
-        importButton: byId("importSpritesButton"),
-        fileInput: byId("spriteFileInput")
+        buildButton: byId("buildGameDataButton")
       }
     });
   }
 
-  function init() {
-    levels = window.PlatformerStorage.loadLevels();
-    sprites = window.PlatformerStorage.loadSprites();
+  async function init() {
+    // Default game data comes from a build-generated file. Browser local storage
+    // can still override it while a student is experimenting on one machine.
+    const gameData = await window.PlatformerStorage.loadGameData(document.body.dataset.gameData);
+    gameName = window.StudentChallenges.gameTitle(gameData.name);
+    levels = window.StudentChallenges.customizeLevels(gameData.levels);
+    sprites = gameData.sprites;
     initTabs();
     initGame();
     initDesigner();
     initSpriteStudio();
-    toast("Platformer Lab is ready.");
+    toast(message("ready", "{title} is ready.", { title: gameName }));
   }
 
   window.PlatformerApp = { toast, refreshGameContent };
-  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("DOMContentLoaded", () => {
+    init().catch((error) => {
+      console.error("Could not start Platformer Lab", error);
+      toast(message("loadError", "Could not load game data."));
+    });
+  });
 })();

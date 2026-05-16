@@ -22,12 +22,11 @@ Keep sessions short and visible:
 - Camera scrolling.
 - Coins, enemies, spikes, checkpoints, power-ups, and goals.
 - Local saving.
-- Level import/export.
-- Sprite import/export.
+- One game data build file for shared levels and sprites.
 
 ## What Your Child Can Safely Edit
 
-The best first file is `js/student-challenges.js`. It contains settings and small functions that affect visible behavior without requiring them to understand the whole engine.
+The best first file is `js/student-challenges.js`. It contains customization text, settings, player profiles, enemy behavior objects, and small functions that affect visible behavior without requiring them to understand the whole engine.
 
 Good first changes:
 
@@ -38,9 +37,38 @@ Good first changes:
 - Enemy speed.
 - Whether the goal requires all coins.
 
+Good next changes:
+
+- Switch `activePlayerType` between `explorer`, `comet`, and `boulder`.
+- Rename the game, levels, assets, and messages in `customization`.
+- Change the canvas background colors or add an optional music file path.
+- Add a new object to `playerTypes` and give it a movement trade-off.
+- Change an enemy `update` function so it hops, charges, waits, or reacts to the player.
+- Use `gameState` in `onCoinCollected`, `canUseGoal`, or `onPowerUpCollected` to create a new rule.
+
+Concepts this introduces:
+
+- Objects and properties.
+- Functions and parameters.
+- Arrays and patterns.
+- If statements and comparisons.
+- Timers and per-frame updates.
+- Separating engine code from game-specific rules.
+
+## Customization
+
+The `customization` object in `js/student-challenges.js` is the safest place for identity and presentation changes:
+
+- `game` changes the title and subtitle.
+- `levelNames` can rename starter levels by index, while the Designer can rename levels visually.
+- `assetNames` changes labels like Coin, Goal, Player, and tile names.
+- `messages` changes status text and feedback messages.
+- `background` changes the canvas sky, ground, and mountain colors.
+- `music` can point to a file in `assets/music/` and control volume and looping.
+
 ## Level Design
 
-Use the Designer tab for levels. The level format is JSON, but your child does not need to write it. The Export Level button creates a file you can keep, share, or check into source control later.
+Use the Designer tab for levels. Your child paints the level in the browser and saves it there while they work. When the project is ready to share, build one game data file instead of keeping separate level files.
 
 Suggested level rules:
 
@@ -58,7 +86,19 @@ The built-in Sprite Studio is enough for recoloring and redrawing simple pixel a
 - Pixelorama: free desktop pixel art editor.
 - Aseprite: paid, polished, and popular for pixel art.
 
-The built-in editor stores sprites in local storage and can export/import them as JSON. That keeps the project simple and avoids teaching spritesheets too early.
+The built-in editor stores sprites in local storage while your child experiments. The game data build keeps the final levels and sprites together, so you do not need to teach spritesheets or file formats early.
+
+## Building Shared Game Data
+
+The Play tab has a Game Name field and a Build Game Data button. That creates one `.game.json` file containing the current levels and sprites.
+
+To make that file the default for everyone who opens the project, run this from the repo folder:
+
+```powershell
+node tools/build-game-data.js "My Game" --from path\to\my-game.game.json
+```
+
+The command copies the data into `assets/game-data/` and updates `index.html` to load it for new browsers.
 
 ## Publishing Online
 
@@ -81,4 +121,4 @@ Then open `http://localhost:8080`.
 
 ## Backup Advice
 
-Because levels and sprites are saved in the browser, use Export Level and Export Sprites after a good session. Save those JSON files somewhere safe.
+Because drafts are saved in the browser, use Build Game Data after a good session. Save the `.game.json` file somewhere safe or install it as the default with the build command.

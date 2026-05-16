@@ -1,7 +1,11 @@
 (function () {
   "use strict";
 
+  // default-content.js is the built-in safety net. The build command turns this
+  // starter content into assets/game-data/*.game.json for shared defaults.
+
   const tileSize = 32;
+  const defaultGameName = "Platformer Lab";
 
   const tileTypes = [
     { id: 0, name: "Empty", sprite: null, solid: false, hazard: false, color: "#ffffff" },
@@ -79,6 +83,42 @@
       "...KKK....KKK...",
       "................"
     ]),
+    playerComet: spriteFromLines("Comet Player", [
+      "................",
+      "......KKKK......",
+      ".....KSSSSK.....",
+      ".....KSKSSK.....",
+      ".....KSSSSK.....",
+      "......KCCK......",
+      ".....CCCYYC.....",
+      "....CCCCYYCC....",
+      "...KKCCCCCCKK...",
+      ".....CCCCCC.....",
+      ".....CC..CC.....",
+      "....CC....CC....",
+      "...YY......YY...",
+      "..YYY......YYY..",
+      "................",
+      "................"
+    ]),
+    playerBoulder: spriteFromLines("Boulder Player", [
+      "................",
+      "....MMMMMMMM....",
+      "...MSSSSSSSSM...",
+      "...MSKSSSSKSM...",
+      "...MSSSSSSSSM...",
+      "....MMMMMMMM....",
+      "...MMMMBBMMMM...",
+      "..MMMMBBBBMMMM..",
+      "..KKMMBBBBMMKK..",
+      "....MBBBBBBM....",
+      "....MBBBBBBM....",
+      "....MM....MM....",
+      "....MM....MM....",
+      "...KK......KK...",
+      "..KKK......KKK..",
+      "................"
+    ]),
     enemy: spriteFromLines("Enemy", [
       "................",
       "................",
@@ -91,6 +131,42 @@
       "....QQQQQQQQ....",
       ".....Q....Q.....",
       "....KK....KK....",
+      "................"
+    ]),
+    enemyHopper: spriteFromLines("Hopper Enemy", [
+      "................",
+      "................",
+      ".....PPPPPP.....",
+      "....PPPPPPPP....",
+      "...PPWPPPPWPP...",
+      "..PPPPPPPPPPPP..",
+      "..PPKPPPPPPKPP..",
+      "...PPPPPPPPPP...",
+      "....PPPPPPPP....",
+      ".....PP..PP.....",
+      "....KK....KK....",
+      "...KK......KK...",
+      "................",
+      "................",
+      "................",
+      "................"
+    ]),
+    enemyCharger: spriteFromLines("Charger Enemy", [
+      "................",
+      "................",
+      "....MMMMMMMM....",
+      "..MMMMMMMMMMMM..",
+      ".MMWMMMMMMMMWMM.",
+      ".MMMMMMMMMMMMMM.",
+      ".MMKMMMMMMMMKMM.",
+      "..MMMMMMMMMMMM..",
+      "....MMMMMMMM....",
+      "...MM......MM...",
+      "..KK........KK..",
+      ".KKK........KKK.",
+      "................",
+      "................",
+      "................",
       "................"
     ]),
     coin: spriteFromLines("Coin", [
@@ -373,12 +449,24 @@
     return [createStarterLevel(), createSkyStepsLevel()];
   }
 
+  function createDefaultGameData() {
+    return {
+      format: "platformer-lab-game-data",
+      version: 1,
+      name: defaultGameName,
+      levels: createDefaultLevels(),
+      sprites: defaultSprites
+    };
+  }
+
   window.PlatformerDefaults = {
+    defaultGameName,
     tileSize,
     tileTypes,
     editorPalette,
     defaultSprites,
     createDefaultLevels,
+    createDefaultGameData,
     makeLevel,
     makeBlankTiles
   };

@@ -1,15 +1,17 @@
 (function () {
   "use strict";
 
+  // designer.js is the visual level editor. It keeps levels in tile coordinates
+  // because grid cells are easier for students to reason about than pixels.
+
   const tileSize = window.PlatformerDefaults.tileSize;
   const tileTypes = window.PlatformerDefaults.tileTypes;
-  const objectTools = [
-    { type: "start", label: "Start", color: "#2463eb" },
-    { type: "goal", label: "Goal", color: "#e36d5d" },
-    { type: "coin", label: "Coin", color: "#f0bf3f" },
-    { type: "enemy", label: "Enemy", color: "#c93645" },
-    { type: "checkpoint", label: "Checkpoint", color: "#2fb7c7" },
-    { type: "powerUp", label: "Power Up", color: "#6d57d9" }
+  const fixedObjectTools = [
+    { type: "start", assetKey: "start", fallbackLabel: "Start", color: "#2463eb" },
+    { type: "goal", assetKey: "goal", fallbackLabel: "Goal", color: "#e36d5d" },
+    { type: "coin", assetKey: "coin", fallbackLabel: "Coin", color: "#f0bf3f" },
+    { type: "checkpoint", assetKey: "checkpoint", fallbackLabel: "Checkpoint", color: "#2fb7c7" },
+    { type: "powerUp", assetKey: "powerUp", fallbackLabel: "Power Up", color: "#6d57d9" }
   ];
 
   let canvas;
@@ -29,6 +31,29 @@
 
   function setElements(nextElements) {
     elements = nextElements;
+  }
+
+  function getEnemyTools() {
+    const enemyTypes = window.StudentChallenges.enemyTypes || {};
+    return Object.keys(enemyTypes).map((enemyType) => {
+      const definition = enemyTypes[enemyType];
+      return {
+        type: "enemy",
+        enemyType,
+        label: definition.label || enemyType,
+        color: definition.color || "#c93645"
+      };
+    });
+  }
+
+  function getObjectTools() {
+    // Enemy brushes come from the student file. If a student adds a new enemy
+    // definition there, it appears in the designer without another engine edit.
+    const fixedTools = fixedObjectTools.map((tool) => ({
+      ...tool,
+      label: window.StudentChallenges.assetName(tool.assetKey, tool.fallbackLabel)
+    }));
+    return fixedTools.concat(getEnemyTools());
   }
 
   function updateScrollRange() {
@@ -77,6 +102,8 @@
   }
 
   function renderBrushPalette() {
+    // The brush palette mixes engine tile types with student-defined enemy tools,
+    // so coding a new enemy can immediately affect the visual editor.
     const palette = elements.brushPalette;
     palette.innerHTML = "";
 
@@ -89,22 +116,26 @@
     palette.appendChild(erase);
 
     tileTypes.filter((tile) => tile.id !== 0).forEach((tile) => {
+      const tileLabel = window.StudentChallenges.assetName(tile.sprite, tile.name);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "tool-button";
       button.dataset.kind = "tile";
       button.dataset.id = String(tile.id);
       button.appendChild(createSwatch(tile.color));
-      button.append(tile.name);
+      button.append(tileLabel);
       palette.appendChild(button);
     });
 
-    objectTools.forEach((tool) => {
+    getObjectTools().forEach((tool) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "tool-button";
       button.dataset.kind = "object";
       button.dataset.type = tool.type;
+      if (tool.enemyType) {
+        button.dataset.enemyType = tool.enemyType;
+      }
       button.appendChild(createSwatch(tool.color));
       button.append(tool.label);
       palette.appendChild(button);
@@ -118,9 +149,14 @@
 
       if (button.dataset.kind === "tile") {
         const tile = tileTypes.find((candidate) => candidate.id === Number(button.dataset.id));
-        selectedTool = { kind: "tile", id: tile.id, label: tile.name };
+        selectedTool = { kind: "tile", id: tile.id, label: window.StudentChallenges.assetName(tile.sprite, tile.name) };
       } else if (button.dataset.kind === "object") {
-        selectedTool = { kind: "object", type: button.dataset.type, label: button.textContent.trim() };
+        selectedTool = {
+          kind: "object",
+          type: button.dataset.type,
+          enemyType: button.dataset.enemyType,
+          label: button.textContent.trim()
+        };
       } else {
         selectedTool = { kind: "erase", label: "Erase" };
       }
@@ -135,7 +171,7 @@
       if (selectedTool.kind === "tile" && button.dataset.kind === "tile") {
         active = Number(button.dataset.id) === selectedTool.id;
       } else if (selectedTool.kind === "object" && button.dataset.kind === "object") {
-        active = button.dataset.type === selectedTool.type;
+        active = button.dataset.type === selectedTool.type && (button.dataset.enemyType || "") === (selectedTool.enemyType || "");
       } else if (selectedTool.kind === "erase" && button.dataset.kind === "erase") {
         active = true;
       }
@@ -159,22 +195,34 @@
     level.objects = level.objects.filter((object) => object.x !== col || object.y !== row);
   }
 
-  function placeObject(level, col, row, type) {
+  function placeObject(level, col, row, tool) {
+    const type = tool.type;
     if (type === "start" || type === "goal") {
       level.objects = level.objects.filter((object) => object.type !== type);
     }
     removeObjectsAt(level, col, row);
-    level.objects.push({ type, x: col, y: row, direction: type === "enemy" ? 1 : undefined });
+    level.objects.push({
+      type,
+      x: col,
+      y: row,
+      kind: type === "enemy" ? tool.enemyType : undefined,
+      direction: type === "enemy" ? 1 : undefined
+    });
     level.objects = level.objects.map((object) => {
       const clean = { ...object };
       if (clean.direction === undefined) {
         delete clean.direction;
+      }
+      if (clean.kind === undefined) {
+        delete clean.kind;
       }
       return clean;
     });
   }
 
   function paintCell(event) {
+    // Painting is intentionally direct: one pointer location maps to one tile or
+    // object. That makes cause and effect easy to see while designing levels.
     const level = currentLevel();
     const cell = pointerToCell(event);
     if (!level || cell.col < 0 || cell.row < 0 || cell.col >= level.width || cell.row >= level.height) {
@@ -184,7 +232,7 @@
     if (selectedTool.kind === "tile") {
       level.tiles[cell.row][cell.col] = selectedTool.id;
     } else if (selectedTool.kind === "object") {
-      placeObject(level, cell.col, cell.row, selectedTool.type);
+      placeObject(level, cell.col, cell.row, selectedTool);
     } else {
       level.tiles[cell.row][cell.col] = 0;
       removeObjectsAt(level, cell.col, cell.row);
@@ -255,7 +303,10 @@
     } else if (object.type === "coin") {
       window.PixelArt.drawSprite(ctx, sprites.coin, x + 5, y + 5, 22, 22);
     } else if (object.type === "enemy") {
-      window.PixelArt.drawSprite(ctx, sprites.enemy, x + 2, y + 8, 28, 24);
+      const enemy = window.StudentChallenges.makeEnemy(object, 0);
+      const drawX = x + Math.floor((tileSize - enemy.width) / 2);
+      const drawY = y + tileSize - enemy.height;
+      window.PixelArt.drawSprite(ctx, sprites[enemy.sprite] || sprites.enemy, drawX, drawY, enemy.width, enemy.height);
     } else if (object.type === "checkpoint") {
       window.PixelArt.drawSprite(ctx, sprites.checkpoint, x + 2, y - 10, 30, 42);
     } else if (object.type === "powerUp") {
@@ -360,26 +411,6 @@
     elements.heightInput.addEventListener("change", applyFormChanges);
     elements.saveButton.addEventListener("click", saveLevel);
     elements.newButton.addEventListener("click", newLevel);
-    elements.exportButton.addEventListener("click", () => {
-      saveLevel();
-      window.PlatformerStorage.downloadJson(`${currentLevel().name.replace(/\s+/g, "-").toLowerCase()}.level.json`, currentLevel());
-    });
-    elements.importButton.addEventListener("click", () => elements.fileInput.click());
-    elements.fileInput.addEventListener("change", () => {
-      const file = elements.fileInput.files[0];
-      if (!file) {
-        return;
-      }
-      window.PlatformerStorage.readJsonFile(file, (json) => {
-        levels.push(window.PlatformerStorage.normalizeLevel(json));
-        selectedLevelIndex = levels.length - 1;
-        saveLevel();
-        populateLevelSelects();
-        syncForm();
-        draw();
-      }, () => window.PlatformerApp.toast("Could not import that level file."));
-      elements.fileInput.value = "";
-    });
 
     draw();
   }

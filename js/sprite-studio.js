@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  // sprite-studio.js is a tiny pixel editor. It edits the sprite data directly,
+  // then app.js refreshes the game so students can playtest their art.
+
   let canvas;
   let ctx;
   let previewCanvas;
@@ -21,7 +24,7 @@
     Object.keys(sprites).forEach((key) => {
       const option = document.createElement("option");
       option.value = key;
-      option.textContent = sprites[key].name || key;
+      option.textContent = window.StudentChallenges.assetName(key, sprites[key].name || key);
       elements.spriteSelect.appendChild(option);
     });
     if (!sprites[selectedKey]) {
@@ -73,6 +76,8 @@
   }
 
   function paint(event) {
+    // Painting changes one cell in the selected sprite. The first palette swatch
+    // is transparent, so erasing pixels uses the same path as drawing colors.
     const sprite = currentSprite();
     const cell = cellFromPointer(event);
     if (!sprite || cell.col < 0 || cell.row < 0 || cell.col >= sprite.width || cell.row >= sprite.height) {
@@ -92,6 +97,8 @@
   }
 
   function drawEditor() {
+    // The editor view shows transparency, the sprite, and a grid so students can
+    // reason about individual pixels instead of guessing where they clicked.
     const sprite = currentSprite();
     if (!sprite) {
       return;
@@ -184,25 +191,6 @@
     });
     elements.saveButton.addEventListener("click", saveSprites);
     elements.resetButton.addEventListener("click", resetSprites);
-    elements.exportButton.addEventListener("click", () => {
-      saveSprites();
-      window.PlatformerStorage.downloadJson("platformer-lab-sprites.json", sprites);
-    });
-    elements.importButton.addEventListener("click", () => elements.fileInput.click());
-    elements.fileInput.addEventListener("change", () => {
-      const file = elements.fileInput.files[0];
-      if (!file) {
-        return;
-      }
-      window.PlatformerStorage.readJsonFile(file, (json) => {
-        sprites = window.PixelArt.normalizeSprites(json);
-        selectedKey = Object.keys(sprites)[0] || "player";
-        populateSpriteSelect();
-        draw();
-        saveSprites();
-      }, () => window.PlatformerApp.toast("Could not import that sprite file."));
-      elements.fileInput.value = "";
-    });
 
     draw();
   }
