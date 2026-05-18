@@ -26,7 +26,7 @@ Keep sessions short and visible:
 
 ## What Your Child Can Safely Edit
 
-The best first file is `js/student-challenges.js`. It contains customization text, settings, player profiles, enemy behavior objects, and small functions that affect visible behavior without requiring them to understand the whole engine.
+The best first file is `js/student-challenges.js`. It contains customization text, simple player settings, enemy behavior objects, and small functions that affect visible behavior without requiring them to understand the whole engine.
 
 Good first changes:
 
@@ -39,10 +39,10 @@ Good first changes:
 
 Good next changes:
 
-- Switch `activePlayerType` between `explorer`, `comet`, and `boulder`.
+- Switch `playerSprite` between `player`, `playerComet`, and `playerBoulder`.
 - Rename the game, levels, assets, and messages in `customization`.
 - Change the canvas background colors or add an optional music file path.
-- Add a new object to `playerTypes` and give it a movement trade-off.
+- Edit `updatePlayer` to try a glide, dash, or different stopping rule.
 - Change an enemy `update` function so it hops, charges, waits, or reacts to the player.
 - Use `gameState` in `onCoinCollected`, `canUseGoal`, or `onPowerUpCollected` to create a new rule.
 

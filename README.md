@@ -59,7 +59,7 @@ node tools/build-game-data.js "My Game" --from path\to\my-game.game.json
 - A playable scrolling platform game in `index.html`.
 - A built-in level designer, so levels are painted instead of programmed.
 - A built-in sprite studio, so characters, tiles, coins, and enemies can be edited in the browser.
-- Student-editable player profiles, enemy behaviors, and gameplay rule hooks.
+- Student-editable player settings, enemy behaviors, and gameplay rule hooks.
 - Student-editable title, labels, messages, background colors, asset names, and optional music path.
 - Local save support through the browser's local storage.
 - A single game data build flow for levels and sprites together.
@@ -74,7 +74,7 @@ node tools/build-game-data.js "My Game" --from path\to\my-game.game.json
 4. Save the level and press Try Level.
 5. Open the Sprites tab and recolor the player.
 6. Edit one number in `js/student-challenges.js`, such as jump height or run speed.
-7. Change `activePlayerType` to `comet`, then compare how that profile overrides the base settings.
+7. Change `playerSprite` to `playerComet`, then tune the same movement numbers if the character should feel different.
 8. Place Walker, Hopper, and Charger enemies in the Designer and change their behavior functions.
 9. Edit the `customization` object to rename the game, coins, messages, or background colors.
 

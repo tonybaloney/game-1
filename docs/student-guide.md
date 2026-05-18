@@ -92,31 +92,31 @@ Now the player must collect every coin before the flag works.
 
 Change `enemyPatrolSpeed`. If enemies move too fast, the game feels unfair. If they move too slowly, they may be boring.
 
-### Quest 6: Try Different Players
+### Quest 6: Change Player Art
 
 Find:
 
 ```javascript
-activePlayerType: "explorer"
+playerSprite: "player"
 ```
 
 Try:
 
 ```javascript
-activePlayerType: "comet"
+playerSprite: "playerComet"
 ```
 
-Then try `"boulder"`. Compare the objects in `playerTypes`. Which properties make each player feel different?
+Then try `"playerBoulder"`. This only changes the picture. If the character should feel different too, change the movement numbers near it, like `maxRunSpeed`, `jumpVelocity`, or `gravity`.
 
-### Quest 7: Make A New Player
+### Quest 7: Change Movement Code
 
-Copy one player object in `playerTypes`, rename it, and change at least three properties. Good trade-offs are more interesting than simple upgrades.
+Find `updatePlayer`. That function runs every frame and decides how the player moves.
 
-Examples:
+Try one small code change:
 
-- Fast but hard to stop.
-- Slow but jumps high.
-- Tiny but only has one life if you add that rule later.
+- Make the player glide when holding jump.
+- Make stopping extra slippery.
+- Add a short dash when the player presses left or right.
 
 ### Quest 8: Read Enemy Objects
 

@@ -9,8 +9,8 @@
     // The title shows in the browser tab, page header, and game data name field.
     game: {
       // Leave blank to use the Game Name field, or set a string to force a title.
-      title: "",
-      subtitle: "Play, design levels, redraw sprites, then change the rules."
+      title: "", // Change me to force a game title; leave "" to use the Game Name box.
+      subtitle: "Play, design levels, redraw sprites, then change the rules." // Change me to rewrite the text under the title.
     },
 
     // Rename the starter levels here, or use the Designer's Name field.
@@ -22,156 +22,120 @@
 
     // These names are used by the Designer, Sprite Studio, HUD, and messages.
     assetNames: {
-      start: "Start",
-      goal: "Goal",
-      coin: "Coin",
-      coins: "Coins",
-      checkpoint: "Checkpoint",
-      powerUp: "Power Up",
-      player: "Player",
-      playerComet: "Comet Player",
-      playerBoulder: "Boulder Player",
-      enemy: "Enemy",
-      enemyHopper: "Hopper Enemy",
-      enemyCharger: "Charger Enemy",
-      tileGrass: "Grass",
-      tileDirt: "Dirt",
-      tileStone: "Stone",
-      tileSpike: "Spikes",
-      tileSpring: "Spring"
+      start: "Start", // Change me to rename the start marker brush.
+      goal: "Goal", // Change me to rename the flag or exit.
+      coin: "Coin", // Change me to rename one collectible.
+      coins: "Coins", // Change me to rename collectibles in the HUD.
+      checkpoint: "Checkpoint", // Change me to rename checkpoint objects.
+      powerUp: "Power Up", // Change me to rename purple bonus objects.
+      player: "Player", // Change me to rename the main character in messages.
+      enemy: "Enemy", // Change me to rename the normal enemy.
+      enemyHopper: "Hopper Enemy", // Change me to rename the jumping enemy.
+      enemyCharger: "Charger Enemy", // Change me to rename the charging enemy.
+      tileGrass: "Grass", // Change me to rename the grass brush.
+      tileDirt: "Dirt", // Change me to rename the dirt brush.
+      tileStone: "Stone", // Change me to rename the stone brush.
+      tileSpike: "Spikes", // Change me to rename the danger brush.
+      tileSpring: "Spring" // Change me to rename the bouncy brush.
     },
 
     labels: {
-      level: "Level",
-      gameName: "Game Name",
-      buildGameData: "Build Game Data",
-      restart: "Restart",
-      nextLevel: "Next Level",
-      score: "Score",
-      lives: "Lives",
-      status: "Status",
-      controlsTitle: "Controls",
-      controlsText: "Move with A/D or arrow keys. Jump with W, Up, or Space. Press R to restart.",
-      musicOn: "Music On",
-      musicOff: "Music Off"
+      level: "Level", // Change me to rename the level picker label.
+      gameName: "Game Name", // Change me to rename the game name box label.
+      buildGameData: "Build Game Data", // Change me to rename the build button.
+      restart: "Restart", // Change me to rename the restart button.
+      nextLevel: "Next Level", // Change me to rename the next level button.
+      score: "Score", // Change me to rename the score label.
+      lives: "Lives", // Change me to rename the lives label.
+      status: "Status", // Change me to rename the status label.
+      controlsTitle: "Controls", // Change me to rename the controls heading.
+      controlsText: "Move with A/D or arrow keys. Jump with W, Up, or Space. Press R to restart.", // Change me to rewrite the controls help.
+      musicOn: "Music On", // Change me to rename the music button while music plays.
+      musicOff: "Music Off" // Change me to rename the music button while music is stopped.
     },
 
     // Messages are the text shown in the status panel, canvas, and toast popups.
     // Words inside braces, like {enemy}, are filled in by the engine.
     messages: {
-      ready: "{title} is ready.",
-      findGoal: "Find the flag",
-      levelSaved: "Level saved.",
-      spritesSaved: "Sprites saved.",
-      gameDataBuilt: "Game data built.",
-      gameDataSaved: "Game data saved to {path}.",
-      gameDataDownloaded: "Game data downloaded. Run the dev server to save directly.",
-      springJump: "Spring jump",
-      spikeHit: "Watch the spikes",
-      fell: "You fell",
-      outOfLives: "Out of lives. Restarting.",
-      tryAgain: "Try again",
-      coinCollected: "{asset} collected",
-      powerUpCollected: "Speed boost",
-      checkpointSaved: "Checkpoint saved",
-      enemyBounced: "{enemy} bounced",
-      enemyHit: "Enemy hit",
-      levelComplete: "Level complete",
-      levelCompleteHint: "Use Next Level or open the Designer.",
-      collectEveryCoinFirst: "Collect every coin first",
-      musicUnavailable: "Add a music file path in js/student-challenges.js first.",
-      musicStarted: "Music started.",
-      musicStopped: "Music stopped."
+      ready: "{title} is ready.", // Change me to rewrite the first status message; {title} inserts the game title.
+      findGoal: "Find the flag", // Change me to rewrite the normal level goal.
+      levelSaved: "Level saved.", // Change me to rewrite the level-save toast.
+      spritesSaved: "Sprites saved.", // Change me to rewrite the sprite-save toast.
+      gameDataBuilt: "Game data built.", // Change me to rewrite the older build message.
+      gameDataSaved: "Game data saved to {path}.", // Change me to rewrite the direct-save message; {path} inserts the file path.
+      gameDataDownloaded: "Game data downloaded. Run the dev server to save directly.", // Change me to rewrite the download fallback message.
+      springJump: "Spring jump", // Change me to rewrite the spring feedback.
+      spikeHit: "Watch the spikes", // Change me to rewrite the spike danger message.
+      fell: "You fell", // Change me to rewrite the falling message.
+      outOfLives: "Out of lives. Restarting.", // Change me to rewrite the no-lives message.
+      tryAgain: "Try again", // Change me to rewrite the restart encouragement.
+      coinCollected: "{asset} collected", // Change me to rewrite the collect message; {asset} inserts the coin name.
+      powerUpCollected: "Speed boost", // Change me to rewrite the power-up message.
+      checkpointSaved: "Checkpoint saved", // Change me to rewrite the checkpoint message.
+      enemyBounced: "{enemy} bounced", // Change me to rewrite the stomp message; {enemy} inserts the enemy name.
+      enemyHit: "Enemy hit", // Change me to rewrite the damage message.
+      levelComplete: "Level complete", // Change me to rewrite the win message.
+      levelCompleteHint: "Use Next Level or open the Designer.", // Change me to rewrite the hint after winning.
+      collectEveryCoinFirst: "Collect every coin first", // Change me to rewrite the locked-goal message.
+      musicUnavailable: "Add a music file path in js/student-challenges.js first.", // Change me to rewrite the missing-music message.
+      musicStarted: "Music started.", // Change me to rewrite the music-start message.
+      musicStopped: "Music stopped." // Change me to rewrite the music-stop message.
     },
 
     // The canvas background uses simple colors so students can theme the game
     // without needing art software. Try a night sky, lava cave, or candy world.
     background: {
-      skyColor: "#95d6f0",
-      groundColor: "#f5fbff",
-      mountainColor: "#6f8fb2",
-      mountainStep: 320,
-      mountainHeight: 130
+      skyColor: "#95d6f0", // Change me to set the sky color; use a hex color like "#001d3d".
+      groundColor: "#f5fbff", // Change me to set the strip behind the ground.
+      mountainColor: "#6f8fb2", // Change me to set the far mountain color.
+      mountainStep: 320, // Change me to space mountains; try 180 (many) to 520 (few).
+      mountainHeight: 130 // Change me to size mountains; try 60 (low) to 220 (tall).
     },
 
     // Optional music. Add a file such as assets/music/theme.mp3, then set src.
     // Browsers only allow music after a button click, so app.js shows a Music
     // button when src is not empty.
     music: {
-      src: "",
-      volume: 0.45,
-      loop: true
+      src: "", // Change me to a file path like "assets/music/theme.mp3".
+      volume: 0.45, // Change me to set loudness; use 0 (silent) to 1 (full volume).
+      loop: true // Change me to false if the song should play once.
     }
   };
 
   const settings = {
-    // Quest 6: pick which player profile is active. Try "comet" or "boulder".
-    activePlayerType: "explorer",
+    // Quest 6: pick the player's art. Try "playerComet" or "playerBoulder".
+    // This only changes the picture. The movement numbers below still control
+    // how the player feels.
+    playerSprite: "player", // Change me to "playerComet" or "playerBoulder" to swap the player art.
 
     // Quest 1: tune these numbers and playtest after each change.
-    maxRunSpeed: 5.2,
-    runAcceleration: 0.72,
-    friction: 0.82,
-    gravity: 0.62,
-    maxFallSpeed: 13.5,
-    jumpVelocity: -12.6,
-    springVelocity: -16.5,
+    maxRunSpeed: 5.2, // Change me to set top speed; try 3 (slow), 5 (normal), or 8 (fast).
+    runAcceleration: 0.72, // Change me to set how quickly speed builds; try 0.2 (slow) to 1.4 (snappy).
+    friction: 0.82, // Change me to set stopping; try 0.6 (sticky) to 0.96 (slippery).
+    gravity: 0.62, // Change me to set falling; try 0.3 (floaty) to 1.0 (heavy).
+    maxFallSpeed: 13.5, // Change me to cap falling speed; try 8 (gentle) to 18 (fast fall).
+    jumpVelocity: -12.6, // Change me to set jump height; try -8 (small) to -16 (huge). More negative jumps higher.
+    springVelocity: -16.5, // Change me to set spring height; try -12 (small) to -22 (huge). More negative bounces higher.
 
     // Quest 2: change this to 1 for double jump, or 2 for triple jump.
-    airJumps: 0,
+    airJumps: 0, // Change me to allow extra jumps in the air; use 0 (none), 1 (double jump), or 2 (triple jump).
 
     // Quest 3: make coins more or less valuable.
-    coinValue: 10,
+    coinValue: 10, // Change me to set points per coin; try 1 (tiny reward) to 100 (huge reward).
 
     // Quest 4: set this to true to make the flag open only after every coin is collected.
-    requireAllCoinsForGoal: false,
+    requireAllCoinsForGoal: false, // Change me to true if the goal should require every coin.
 
     // Quest 5: tune enemies until they feel challenging but fair.
-    enemyPatrolSpeed: 1.25,
-    enemyStompBounce: -8.5,
+    enemyPatrolSpeed: 1.25, // Change me to set normal enemy speed; try 0.4 (slow) to 3 (fast).
+    enemyStompBounce: -8.5, // Change me to set bounce after stomping; try -5 (small) to -14 (big).
 
     // Quest 8: decide which enemy type appears when old levels have plain enemies.
-    enemyPattern: ["walker", "hopper", "charger"],
+    enemyPattern: ["walker", "hopper", "charger"], // Change me to reorder default enemies; use "walker", "hopper", or "charger".
 
     // Quest 10: change the speed boost reward from purple power-ups.
-    powerUpRunBonus: 1.45,
-    powerUpDurationSeconds: 6
-  };
-
-  // Player profiles are data objects. Students can add a new object here, then
-  // set settings.activePlayerType to its key. Any missing number falls back to
-  // the simple settings above, so a new profile can start tiny and grow later.
-  const playerTypes = {
-    explorer: {
-      label: "Explorer",
-      sprite: "player",
-      width: 26,
-      height: 30
-    },
-    comet: {
-      label: "Comet",
-      sprite: "playerComet",
-      width: 24,
-      height: 30,
-      maxRunSpeed: 6.4,
-      runAcceleration: 0.9,
-      friction: 0.88,
-      gravity: 0.52,
-      jumpVelocity: -12.2,
-      airJumps: 1
-    },
-    boulder: {
-      label: "Boulder",
-      sprite: "playerBoulder",
-      width: 30,
-      height: 30,
-      maxRunSpeed: 4.2,
-      runAcceleration: 0.55,
-      friction: 0.78,
-      gravity: 0.74,
-      jumpVelocity: -13.4,
-      enemyStompBounce: -10.5
-    }
+    powerUpRunBonus: 1.45, // Change me to set boost strength; use 1 (no boost), 1.5 (fast), or 2 (very fast).
+    powerUpDurationSeconds: 6 // Change me to set boost time; try 2 (short) to 12 (long).
   };
 
   function numberOrDefault(value, fallback) {
@@ -219,27 +183,23 @@
     return customization.music;
   }
 
-  function selectedPlayerType() {
-    return playerTypes[settings.activePlayerType] || playerTypes.explorer;
-  }
-
   function makePlayerProfile() {
-    const profile = selectedPlayerType();
+    const sprite = settings.playerSprite || "player";
     return {
-      key: settings.activePlayerType,
-      label: profile.label || "Player",
-      sprite: profile.sprite || "player",
-      width: numberOrDefault(profile.width, 26),
-      height: numberOrDefault(profile.height, 30),
-      maxRunSpeed: numberOrDefault(profile.maxRunSpeed, settings.maxRunSpeed),
-      runAcceleration: numberOrDefault(profile.runAcceleration, settings.runAcceleration),
-      friction: numberOrDefault(profile.friction, settings.friction),
-      gravity: numberOrDefault(profile.gravity, settings.gravity),
-      maxFallSpeed: numberOrDefault(profile.maxFallSpeed, settings.maxFallSpeed),
-      jumpVelocity: numberOrDefault(profile.jumpVelocity, settings.jumpVelocity),
-      springVelocity: numberOrDefault(profile.springVelocity, settings.springVelocity),
-      airJumps: numberOrDefault(profile.airJumps, settings.airJumps),
-      enemyStompBounce: numberOrDefault(profile.enemyStompBounce, settings.enemyStompBounce)
+      key: "player",
+      label: assetName("player", "Player"),
+      sprite,
+      width: 26,
+      height: 30,
+      maxRunSpeed: settings.maxRunSpeed,
+      runAcceleration: settings.runAcceleration,
+      friction: settings.friction,
+      gravity: settings.gravity,
+      maxFallSpeed: settings.maxFallSpeed,
+      jumpVelocity: settings.jumpVelocity,
+      springVelocity: settings.springVelocity,
+      airJumps: settings.airJumps,
+      enemyStompBounce: settings.enemyStompBounce
     };
   }
 
@@ -280,27 +240,27 @@
   // built; the update function says what it decides to do each frame.
   const enemyTypes = {
     walker: {
-      label: "Walker",
-      sprite: "enemy",
-      color: "#c93645",
-      width: 28,
-      height: 24,
-      speed: 1.25,
-      score: 25,
+      label: "Walker", // Change me to rename this enemy in messages.
+      sprite: "enemy", // Change me to use another sprite key, like "enemyHopper".
+      color: "#c93645", // Change me to set the Designer brush color.
+      width: 28, // Change me to set collision width; try 20 (small) to 36 (wide).
+      height: 24, // Change me to set collision height; try 18 (short) to 34 (tall).
+      speed: 1.25, // Change me to set walking speed; try 0.4 (slow) to 3 (fast).
+      score: 25, // Change me to set stomp points; try 0 (none) to 100 (big reward).
       update(enemy, gameState, helpers) {
         helpers.walkPatrol(enemy, this.speed);
       }
     },
     hopper: {
-      label: "Hopper",
-      sprite: "enemyHopper",
-      color: "#168a55",
-      width: 26,
-      height: 26,
-      speed: 0.75,
-      jumpVelocity: -8.2,
-      waitFrames: 65,
-      score: 40,
+      label: "Hopper", // Change me to rename this enemy in messages.
+      sprite: "enemyHopper", // Change me to use another sprite key, like "enemy".
+      color: "#168a55", // Change me to set the Designer brush color.
+      width: 26, // Change me to set collision width; try 20 (small) to 36 (wide).
+      height: 26, // Change me to set collision height; try 18 (short) to 34 (tall).
+      speed: 0.75, // Change me to set walking speed; try 0.2 (slow) to 2 (fast).
+      jumpVelocity: -8.2, // Change me to set hop height; try -5 (small) to -14 (huge). More negative hops higher.
+      waitFrames: 65, // Change me to set time between hops; try 20 (often) to 120 (rare).
+      score: 40, // Change me to set stomp points; try 0 (none) to 100 (big reward).
       update(enemy, gameState, helpers) {
         helpers.walkPatrol(enemy, this.speed);
 
@@ -314,15 +274,15 @@
       }
     },
     charger: {
-      label: "Charger",
-      sprite: "enemyCharger",
-      color: "#6d57d9",
-      width: 32,
-      height: 24,
-      speed: 0.7,
-      chargeSpeed: 3.2,
-      noticeDistance: 240,
-      score: 60,
+      label: "Charger", // Change me to rename this enemy in messages.
+      sprite: "enemyCharger", // Change me to use another sprite key, like "enemyHopper".
+      color: "#6d57d9", // Change me to set the Designer brush color.
+      width: 32, // Change me to set collision width; try 22 (small) to 42 (wide).
+      height: 24, // Change me to set collision height; try 18 (short) to 34 (tall).
+      speed: 0.7, // Change me to set patrol speed before charging; try 0.2 (slow) to 2 (fast).
+      chargeSpeed: 3.2, // Change me to set charge speed; try 1 (slow) to 6 (scary fast).
+      noticeDistance: 240, // Change me to set how far it sees; try 80 (near) to 420 (far).
+      score: 60, // Change me to set stomp points; try 0 (none) to 150 (big reward).
       update(enemy, gameState, helpers) {
         const previousX = enemy.x;
         if (helpers.isPlayerNear(enemy, this.noticeDistance, 80)) {
@@ -399,7 +359,6 @@
   window.StudentChallenges = {
     customization,
     settings,
-    playerTypes,
     enemyTypes,
     gameTitle,
     label,
