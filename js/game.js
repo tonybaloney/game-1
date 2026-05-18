@@ -11,6 +11,11 @@
   const solidTiles = new Set(tileTypes.filter((tile) => tile.solid).map((tile) => tile.id));
   const hazardTiles = new Set(tileTypes.filter((tile) => tile.hazard).map((tile) => tile.id));
   const springTiles = new Set(tileTypes.filter((tile) => tile.spring).map((tile) => tile.id));
+  const collisionEpsilon = 0.001;
+  // These tiny timing windows make jumping feel fair without exposing more
+  // complexity in js/student-challenges.js.
+  const jumpBufferFrames = 7;
+  const coyoteFrames = 6;
 
   let canvas;
   let ctx;
@@ -118,9 +123,9 @@
     // touched by the rectangle and keep only the tile types we care about.
     const matches = [];
     const left = Math.floor(rect.x / tileSize);
-    const right = Math.floor((rect.x + rect.w - 1) / tileSize);
+    const right = Math.floor((rect.x + rect.w - collisionEpsilon) / tileSize);
     const top = Math.floor(rect.y / tileSize);
-    const bottom = Math.floor((rect.y + rect.h - 1) / tileSize);
+    const bottom = Math.floor((rect.y + rect.h - collisionEpsilon) / tileSize);
 
     for (let ty = top; ty <= bottom; ty += 1) {
       for (let tx = left; tx <= right; tx += 1) {
@@ -149,6 +154,8 @@
       facing: 1,
       onGround: false,
       airJumpsLeft: stats.airJumps,
+      coyoteTimer: 0,
+      jumpBufferTimer: 0,
       invincibleTimer: 0
     };
   }
@@ -283,32 +290,72 @@
     const collisions = collectTilesInRect(actor, solidTiles);
     collisions.forEach((tile) => {
       if (actor.vx > 0) {
-        actor.x = tile.x - actor.w - 0.01;
+        actor.x = tile.x - actor.w;
       } else if (actor.vx < 0) {
-        actor.x = tile.x + tile.w + 0.01;
+        actor.x = tile.x + tile.w;
       }
       actor.vx = 0;
     });
   }
 
-  function resolveVertical(actor, isPlayer) {
-    const collisions = collectTilesInRect(actor, solidTiles);
+  function resolveVertical(actor, isPlayer, previousY) {
+    const movingDown = actor.y >= previousY;
+    const previousBottom = previousY + actor.h;
+    const nextBottom = actor.y + actor.h;
+    const sweptRect = {
+      x: actor.x,
+      y: Math.min(previousY, actor.y),
+      w: actor.w,
+      h: actor.h + Math.abs(actor.y - previousY) + 1
+    };
+    const collisions = collectTilesInRect(sweptRect, solidTiles);
     let touchedGround = false;
+    let resolved = false;
 
-    collisions.forEach((tile) => {
-      if (actor.vy > 0) {
-        actor.y = tile.y - actor.h - 0.01;
+    if (movingDown) {
+      const floor = collisions
+        .filter((tile) => tile.y >= previousBottom - collisionEpsilon && nextBottom >= tile.y)
+        .sort((first, second) => first.y - second.y)[0];
+
+      if (floor) {
+        actor.y = floor.y - actor.h;
+        actor.vy = 0;
         touchedGround = true;
-      } else if (actor.vy < 0) {
-        actor.y = tile.y + tile.h + 0.01;
+        resolved = true;
       }
-      actor.vy = 0;
-    });
+    } else {
+      const previousTop = previousY;
+      const ceiling = collisions
+        .filter((tile) => tile.y + tile.h <= previousTop + collisionEpsilon && actor.y <= tile.y + tile.h)
+        .sort((first, second) => (second.y + second.h) - (first.y + first.h))[0];
+
+      if (ceiling) {
+        actor.y = ceiling.y + ceiling.h;
+        actor.vy = 0;
+        resolved = true;
+      }
+    }
+
+    if (!resolved) {
+      collectTilesInRect(actor, solidTiles).forEach((tile) => {
+        if (actor.vy > 0) {
+          actor.y = tile.y - actor.h;
+          touchedGround = true;
+        } else if (actor.vy < 0) {
+          actor.y = tile.y + tile.h;
+        }
+        actor.vy = 0;
+      });
+    }
+
+    if (isPlayer) {
+      if (touchedGround) {
+        actor.airJumpsLeft = actor.stats.airJumps;
+        actor.coyoteTimer = coyoteFrames;
+      }
+    }
 
     actor.onGround = touchedGround;
-    if (isPlayer && touchedGround) {
-      actor.airJumpsLeft = actor.stats.airJumps;
-    }
   }
 
   function moveActor(actor, step, isPlayer) {
@@ -316,23 +363,53 @@
     actor.x += actor.vx * step;
     resolveHorizontal(actor);
 
+    const previousY = actor.y;
     actor.y += actor.vy * step;
     if (isPlayer) {
       actor.onGround = false;
     }
-    resolveVertical(actor, isPlayer);
+    resolveVertical(actor, isPlayer, previousY);
+  }
+
+  function performJump(player, useAirJump) {
+    player.vy = player.stats.jumpVelocity;
+    player.onGround = false;
+    player.coyoteTimer = 0;
+    player.jumpBufferTimer = 0;
+    if (useAirJump) {
+      player.airJumpsLeft -= 1;
+    }
+    return true;
+  }
+
+  function useBufferedJump(player) {
+    if (player.jumpBufferTimer <= 0) {
+      return false;
+    }
+
+    if (player.onGround || player.coyoteTimer > 0) {
+      return performJump(player, false);
+    }
+
+    if (player.airJumpsLeft > 0) {
+      return performJump(player, true);
+    }
+
+    return false;
   }
 
   function tryJump() {
     const player = state.player;
-    if (player.onGround) {
-      player.vy = player.stats.jumpVelocity;
-      player.onGround = false;
-      return;
+    player.jumpBufferTimer = jumpBufferFrames;
+    return useBufferedJump(player);
+  }
+
+  function tickJumpTimers(player, step) {
+    if (!player.onGround && player.coyoteTimer > 0) {
+      player.coyoteTimer = Math.max(0, player.coyoteTimer - step);
     }
-    if (player.airJumpsLeft > 0) {
-      player.vy = player.stats.jumpVelocity;
-      player.airJumpsLeft -= 1;
+    if (player.jumpBufferTimer > 0) {
+      player.jumpBufferTimer = Math.max(0, player.jumpBufferTimer - step);
     }
   }
 
@@ -394,11 +471,13 @@
 
   function updatePlayer(step) {
     const player = state.player;
+    tickJumpTimers(player, step);
     // StudentChallenges.updatePlayer decides acceleration, friction, jumping,
     // and gravity. The engine then moves the rectangle and resolves collision.
     window.StudentChallenges.updatePlayer(player, state, input, makePlayerHelpers(step));
     input.jumpPressed = false;
     moveActor(player, step, true);
+    useBufferedJump(player);
 
     const springHit = collectTilesInRect(player, springTiles).length > 0;
     if (springHit && player.vy >= 0) {
